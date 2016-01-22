@@ -1,62 +1,57 @@
 <?php
 defined('_JEXEC') or die;
 
-class plgButtonZoearth_Insert_Youtube_Btn extends JPlugin
+class plgButtonZoearth_Insert_Emoticons_Btn extends JPlugin
 {
     public function onDisplay($name)
     {
+        /*
+        20160122 zoearth 這邊的作法構想是
+        1.新增一個form 欄位可以輸入多個值: [表情文字]:[指定圖片]
+        2.圖片會在這邊先依據[表情文字]的 md5 的前4碼.存到外掛的資料夾底下(不能放在暫存區)
+        3.檢查圖片必須是GIF才啟用.如果圖片位置有變也會重新複製一次檔案
+        4.所以預設路徑為 http://www.zoearthmoon.net/plugins/editors-xtd/zoearth_insert_emoticons_btn/imgs/abcd.gif
+        */
 		static $showed;
 		if (!$showed):
 		$lang = JFactory::getLanguage();
-		$lang->load('plg_zoearth_insert_youtube_btn',JPATH_ADMINISTRATOR);
+		$lang->load('plg_zoearth_insert_emoticons_btn',JPATH_ADMINISTRATOR);
+        
+        //20160122 zoearth 取得目前設定
+        $emoticons = $this->params->get('emoticons');
+        ///
 		?>
 		<script language="Javascript">
-		var showYutubeInput = function (editorName){
+		var showEmoticonInput = function (editorName){
 			jQuery.data(document.body,"editorName",editorName);
-			jQuery('#showyoutubeInsertModal').modal('show');			
+			jQuery('#showemoticonsInsertModal').modal('show');			
 		};
 		jQuery(document).ready(function() {
-			jQuery('#showyoutubeInsertModal').on('show',function (){
+			jQuery('#showemoticonsInsertModal').on('show',function (){
 				//出現modal時清空textarea
-				jQuery("#youtubelink").val("");
+				jQuery("#emoticonslink").val("");
 			});
-			//儲存
-			jQuery("#zoearthInsertInput").click(function(){
-				var editorName    = jQuery.data(document.body,"editorName");
-				var youtubelink   = jQuery("#youtubelink").val().trim();
-				var youtubewidth  = parseInt(jQuery("#youtubewidth").val());
-				var youtubeheight = parseInt(jQuery("#youtubeheight").val());
-				var regExp = /(\.be\/|v=)([0-9a-zA-Z-_]*)/;
-				var getV = youtubelink.match(regExp);
-				if (getV && getV[2])
-				{
-					var html = '<iframe width="'+(youtubewidth > 0 ? youtubewidth:560)+'" height="'+(youtubeheight > 0 ? youtubeheight:315)+'" src="//www.youtube.com/embed/'+getV[2]+'" frameborder="0" allowfullscreen></iframe>';
-					jInsertEditorText(html, editorName);
-					jQuery('#showyoutubeInsertModal').modal('hide');
-				}
-				else
-				{
-					alert('<?php echo JText::_('PLG_ZOEARTH_CANT_FIND_YOUTUBE_ID')?>');
-				}
+			//新增圖片
+			jQuery(".addEmoticonGo").click(function(){
+                
+				var editorName = jQuery.data(document.body,"editorName");
+                var img = jQuery(this).data('img');
+                var html = '<img src="'+img+'">';
+                jInsertEditorText(html, editorName);
+                jQuery('#showemoticonsInsertModal').modal('hide');
 			});
 		});
 		</script>
-		<div id="showyoutubeInsertModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div id="showemoticonsInsertModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
-				<h3 id="myModalLabel"><?php echo JText::_('PLG_ZOEARTH_INSERT_YOUTUBE_BTN')?></h3>
+				<h3 id="myModalLabel"><?php echo JText::_('PLG_ZOEARTH_INSERT_EMO_BTN')?></h3>
 			</div>
 			<div class="modal-body">
-				<label><?php echo JText::_('PLG_ZOEARTH_YOUTUBE_LINK')?></label>
-					<input id="youtubelink" class="span12" />
-				<label><?php echo JText::_('PLG_ZOEARTH_YOUTUBE_WIDTH')?></label>
-					<input id="youtubewidth" class="span12" value="560" />
-				<label><?php echo JText::_('PLG_ZOEARTH_YOUTUBE_HEIGHT')?></label>
-					<input id="youtubeheight" class="span12" value="315" />
+				
 			</div>
 			<div class="modal-footer">
 				<a class="btn" data-dismiss="modal" aria-hidden="true"><?php echo JText::_('JOFF') ?></a>
-				<a class="btn btn-primary" id="zoearthInsertInput" ><?php echo JText::_('JSUBMIT') ?></a>
 			</div>
 		</div>
 		<?php
@@ -66,10 +61,10 @@ class plgButtonZoearth_Insert_Youtube_Btn extends JPlugin
         $button = new JObject();				
 		$button->modal = FALSE;
 		$button->class = 'btn';
-		$button->title = JText::_('PLG_ZOEARTH_INSERT_YOUTUBE_BTN');
-        $button->text = JText::_('PLG_ZOEARTH_INSERT_YOUTUBE_BTN');
+		$button->title = JText::_('PLG_ZOEARTH_INSERT_EMO_BTN');
+        $button->text = JText::_('PLG_ZOEARTH_INSERT_EMO_BTN');
         $button->name = 'comment';
-        $button->onclick = 'showYutubeInput(\''.$name.'\');return false;';
+        $button->onclick = 'showEmoticonInput(\''.$name.'\');return false;';
         $button->link = '#';
         return $button;
     }
