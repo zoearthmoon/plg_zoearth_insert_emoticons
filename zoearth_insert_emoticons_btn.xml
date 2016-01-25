@@ -39,7 +39,7 @@
     <config>
         <fields name="params" >
             <fieldset name="basic" addfieldpath="/plugins/editors-xtd/zoearth_insert_emoticons_btn/elements/" >
-                <field name="emoSetup" type="emo_img_input" default="" label="表情圖片設定" />
+                <field name="emoSetup" type="emoimginput" default="" label="表情圖片設定" />
             </fieldset>
         </fields>
     </config>

@@ -19,21 +19,37 @@ class plgButtonZoearth_Insert_Emoticons_Btn extends JPlugin
         
         //20160122 zoearth 取得目前設定
         $emoSetup = $this->params->get('emoSetup');
-        $emoSetup = json_decode($emoSetup,TRUE);
-        
+		$emoSetup = json_decode(json_encode($emoSetup),TRUE);
+		
         $emoImgs = array();
-        if (is_array($emoSetup['title']) && count($emoSetup['title']) > 0 && is_array($emoSetup['imgs']) && count($emoSetup['imgs']) > 0 )
+        if (is_array($emoSetup['title']) && count($emoSetup['title']) > 0 && is_array($emoSetup['src']) && count($emoSetup['src']) > 0 )
         {
             foreach ($emoSetup['title'] as $key=>$title)
             {
+				if ($title == '')continue;
+				
                 $nowKey = substr(md5($title),0,4);
                 //20160122 zoearth 檢查圖片與複製圖片
-                $emoImgs[$key]['title'] = $title;
+				//圖片是否存在.不存在則複製
+				$cImg = JPATH_ROOT.DS.'plugins'.DS.'editors-xtd'.DS.'zoearth_insert_emoticons_btn'.DS.'imgs'.DS.$nowKey.'.gif';
+				$wImg = JUri::root().'/plugins/editors-xtd/zoearth_insert_emoticons_btn/imgs/'.$nowKey.'.gif';
+				if (!is_file($cImg))
+				{
+					if (isset($emoSetup['src'][$key]) && is_file(JPATH_ROOT.DS.$emoSetup['src'][$key]))
+					{
+						copy(JPATH_ROOT.DS.$emoSetup['src'][$key],$cImg);
+					}
+					else
+					{
+						continue;
+					}
+				}
+                $emoImgs[] = array(
+					'title' => $title,
+					'src'   => $wImg,
+					);
             }
         }
-        
-        
-        
 		?>
 		<script language="Javascript">
 		var showEmoticonInput = function (editorName){
@@ -49,29 +65,31 @@ class plgButtonZoearth_Insert_Emoticons_Btn extends JPlugin
 			jQuery(".addEmoticonGo").click(function(){
                 
 				var editorName = jQuery.data(document.body,"editorName");
-                var img = jQuery(this).data('img');
+                var img = jQuery(this).data('src');
                 var html = '<img src="'+img+'">';
                 jInsertEditorText(html, editorName);
                 jQuery('#showemoticonsInsertModal').modal('hide');
 			});
 		});
 		</script>
+		<style type="text/css">
+		.emo img
+		{
+			height:50px;
+		}
+		</style>
 		<div id="showemoticonsInsertModal" class="modal hide fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-header">
 				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">×</button>
 				<h3 id="myModalLabel"><?php echo JText::_('PLG_ZOEARTH_INSERT_EMO_BTN')?></h3>
 			</div>
 			<div class="modal-body">
-			    <ul>
-				<?php foreach ($emoticons['title'] as $key=>$emoTitle):?>
-				    <?php
-				    $emoTitle = trim($emoTitle);
-				    
-				    JPATH_ROOT.'plugins/editors-xtd/zoearth_insert_emoticons_btn/imgs/'.$emo;
-				    ?>
-				    <li><img src="<?php echo JUri::root().'plugins/editors-xtd/zoearth_insert_emoticons_btn/imgs/'?>" ></li>
+				<?php foreach ($emoImgs as $key=>$emo):?>
+				<button class="emo btn btn-large btn-primary addEmoticonGo" data-src="<?php echo $emo['src']?>" type="button">
+					<img src="<?php echo $emo['src']?>" >
+					<?php echo $emo['title'] ?>
+				</button>
 				<?php endforeach;?>
-				</ul>
 			</div>
 			<div class="modal-footer">
 				<a class="btn" data-dismiss="modal" aria-hidden="true"><?php echo JText::_('JOFF') ?></a>
