@@ -30,23 +30,32 @@ class plgButtonZoearth_Insert_Emoticons_Btn extends JPlugin
 				
                 $nowKey = substr(md5($title),0,4);
                 //20160122 zoearth 檢查圖片與複製圖片
-				//圖片是否存在.不存在則複製
+				
 				$cImg = JPATH_ROOT.DS.'plugins'.DS.'editors-xtd'.DS.'zoearth_insert_emoticons_btn'.DS.'imgs'.DS.$nowKey.'.gif';
 				$wImg = JUri::root().'/plugins/editors-xtd/zoearth_insert_emoticons_btn/imgs/'.$nowKey.'.gif';
-				if (!is_file($cImg))
+                $aImg = JPATH_ROOT.DS.$emoSetup['src'][$key];
+                $rKey = md5($aImg);
+                //元圖片是否存在，無則跳過
+                if (!is_file($aImg))
+                {
+                    continue;
+                }
+                //圖片是否存在.不存在則複製
+				else if (!is_file($cImg))
 				{
-					if (isset($emoSetup['src'][$key]) && is_file(JPATH_ROOT.DS.$emoSetup['src'][$key]))
-					{
-						copy(JPATH_ROOT.DS.$emoSetup['src'][$key],$cImg);
-					}
-					else
-					{
-						continue;
-					}
+                    unlink($cImg);
+                    copy($aImg,$cImg);
 				}
+                //元圖片大小是否異動，有則更新
+                else if (ceil(filesize($aImg)/10) != ceil(filesize($cImg)/10))
+                {
+                    unlink($cImg);
+                    copy($aImg,$cImg);
+                }
                 $emoImgs[] = array(
 					'title' => $title,
 					'src'   => $wImg,
+                    'rKey'  => $rKey,
 					);
             }
         }
@@ -86,7 +95,7 @@ class plgButtonZoearth_Insert_Emoticons_Btn extends JPlugin
 			<div class="modal-body">
 				<?php foreach ($emoImgs as $key=>$emo):?>
 				<button class="emo btn btn-large btn-primary addEmoticonGo" data-src="<?php echo $emo['src']?>" type="button">
-					<img src="<?php echo $emo['src']?>" >
+					<img src="<?php echo $emo['src'].'?'.$emo['rKey']?>" >
 					<?php echo $emo['title'] ?>
 				</button>
 				<?php endforeach;?>
