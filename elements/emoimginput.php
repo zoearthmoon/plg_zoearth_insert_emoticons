@@ -61,7 +61,7 @@ class ZoearthElementInsertEmoticonsBtn extends JFormField
 		<div class="row">
 		<div class="input-prepend input-append">
 			<input type="text" name="{%=o.titleName%}" value="{%=o.title%}" placeholder="<?php echo JText::_('JFIELD_TITLE_DESC') ?>" >
-			<input type="text" class="input-small" readonly="readonly" value="{%=o.src%}" id="{%=o.srcId%}" name="{%=o.srcName%}">
+			<input type="text" class="input-small span6" readonly="readonly" value="{%=o.src%}" id="{%=o.srcId%}" name="{%=o.srcName%}">
 			<a class="modal btn btn-info" rel="{handler: 'iframe', size: {x: 800, y: 500}}" onclick="return false;" href="index.php?option=com_media&view=images&tmpl=component&fieldid={%=o.srcId%}" ><?php echo JText::_('JSELECT') ?></a>
 			<a class="btn btn-danger" onclick="jQuery(this).parent().remove();return false;" href="#" ><?php echo JText::_('JACTION_DELETE') ?></a>
 		</div>
