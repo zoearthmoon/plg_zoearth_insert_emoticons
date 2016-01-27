@@ -43,13 +43,12 @@ class plgButtonZoearth_Insert_Emoticons_Btn extends JPlugin
                 //圖片是否存在.不存在則複製
 				else if (!is_file($cImg))
 				{
-                    unlink($cImg);
                     copy($aImg,$cImg);
 				}
                 //元圖片大小是否異動，有則更新
                 else if (ceil(filesize($aImg)/10) != ceil(filesize($cImg)/10))
                 {
-                    unlink($cImg);
+                    @unlink($cImg);
                     copy($aImg,$cImg);
                 }
                 $emoImgs[] = array(

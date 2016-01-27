@@ -37,9 +37,10 @@ class ZoearthElementInsertEmoticonsBtn extends JFormField
 				"srcId"     : "<?php echo $key ?>Src"+Math.random().toString(36).substring(7),
 				};
 			jQuery(".<?php echo $key ?>Div").append(tmpl("tmpl<?php echo $key ?>", data));
-			SqueezeBox.assign(jQuery('a.modal').unbind().get(), {
-				parse: 'rel'
-			});
+            
+            jQuery('a.modal').unbind().click(function(){
+                SqueezeBox.open(jQuery(this).attr('href'),{handler: 'iframe',size: {x: 800, y: 500}});
+            });
 		}
 		function jMediaRefreshPreview(id){}
 		function jInsertFieldValue(value, id) {
@@ -61,7 +62,7 @@ class ZoearthElementInsertEmoticonsBtn extends JFormField
 		<div class="input-prepend input-append">
 			<input type="text" name="{%=o.titleName%}" value="{%=o.title%}" placeholder="<?php echo JText::_('JFIELD_TITLE_DESC') ?>" >
 			<input type="text" class="input-small" readonly="readonly" value="{%=o.src%}" id="{%=o.srcId%}" name="{%=o.srcName%}">
-			<a class="modal btn btn-info" rel="{handler: 'iframe', size: {x: 800, y: 500}}" href="index.php?option=com_media&view=images&tmpl=component&fieldid={%=o.srcId%}" ><?php echo JText::_('JSELECT') ?></a>
+			<a class="modal btn btn-info" rel="{handler: 'iframe', size: {x: 800, y: 500}}" onclick="return false;" href="index.php?option=com_media&view=images&tmpl=component&fieldid={%=o.srcId%}" ><?php echo JText::_('JSELECT') ?></a>
 			<a class="btn btn-danger" onclick="jQuery(this).parent().remove();return false;" href="#" ><?php echo JText::_('JACTION_DELETE') ?></a>
 		</div>
 		</div>
